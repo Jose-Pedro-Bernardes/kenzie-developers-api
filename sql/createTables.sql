@@ -5,6 +5,9 @@ CREATE TABLE IF NOT EXISTS developers (
   PRIMARY KEY(id)
 );
 
+CREATE TYPE os_type AS ENUM ('Windows', 'Linux', 'MacOS');
+
+
 CREATE TABLE IF NOT EXISTS developers_info(
   id                    SERIAL                                      NOT NULL, 
   developerSince        DATE                                        NOT NULL,
@@ -12,8 +15,6 @@ CREATE TABLE IF NOT EXISTS developers_info(
   developerId           INTEGER     REFERENCES developers(id)       UNIQUE NOT NULL,
   PRIMARY KEY(id)
 );
-
-CREATE TYPE os_type AS ENUM ('Windows', 'Linux', 'MacOS');
 
 
 CREATE TABLE IF NOT EXISTS projects (
