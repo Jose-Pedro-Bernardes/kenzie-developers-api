@@ -1,12 +1,13 @@
 import { Response, Request } from "express";
 import format from "pg-format";
 import { client } from "./database";
+import { developerCreate, developerResult } from "./interfaces";
 
 const registerNewDeveloper = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const registerEntrie = req.body;
+  const payload: developerCreate = req.body;
 
   const queryString = format(
     `
@@ -14,11 +15,11 @@ const registerNewDeveloper = async (
     VALUES(%L)
     RETURNING *;
   `,
-    Object.keys(registerEntrie),
-    Object.values(registerEntrie)
+    Object.keys(payload),
+    Object.values(payload)
   );
 
-  const queryResult = await client.query(queryString);
+  const queryResult: developerResult = await client.query(queryString);
   const createdDeveloper = queryResult.rows[0];
 
   return res.status(201).json(createdDeveloper);
@@ -50,4 +51,12 @@ const registerAdicionalInfo = async (
   res: Response
 ): Promise<Response> => {
   return res.status(201).json();
+};
+
+export {
+  registerNewDeveloper,
+  listDeveloperById,
+  updateDeveloperData,
+  removeDeveloper,
+  registerAdicionalInfo,
 };
