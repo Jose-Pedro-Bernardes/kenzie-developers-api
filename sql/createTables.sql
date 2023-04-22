@@ -35,6 +35,19 @@ CREATE TABLE IF NOT EXISTS technologies (
   PRIMARY KEY(id)
 );
 
+INSERT INTO technologies(name)
+VALUES
+('JavaScript'),
+('Python'),
+('React'),
+('Express.js'),
+('HTML'),
+('CSS'),
+('Django'),
+('PostgreSQL'),
+('MongoDB');
+
+
 CREATE TABLE IF NOT EXISTS projects_technologies (
   id              SERIAL                                    NOT NULL,
   addedIn         DATE                                      NOT NULL,
