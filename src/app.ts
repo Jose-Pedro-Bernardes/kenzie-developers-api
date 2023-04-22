@@ -39,4 +39,11 @@ app.post(
   registerAdicionalInfo
 );
 
+app.post("/projects");
+app.get("/projects/:id");
+app.patch("/projects/:id");
+app.delete("/projects/:id");
+app.post("/projects/:id/technologies");
+app.delete("/projects/:id/technologies/name");
+
 export default app;
