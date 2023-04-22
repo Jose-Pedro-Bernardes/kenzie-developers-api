@@ -96,7 +96,18 @@ const updateDeveloperData = async (
 const removeDeveloper = async (
   req: Request,
   res: Response
-): Promise<Response> => {
+): Promise<Response<void>> => {
+  const id = parseInt(req.params.id);
+
+  const queryString = format(
+    `
+    DELETE FROM developers WHERE id = %L;
+  `,
+    id
+  );
+
+  const queryResult = await client.query(queryString);
+
   return res.status(204).json();
 };
 
