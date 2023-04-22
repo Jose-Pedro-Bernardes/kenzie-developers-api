@@ -115,7 +115,25 @@ const registerAdicionalInfo = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  return res.status(201).json();
+  const id = parseInt(req.params.id);
+  const payload = req.body;
+
+  const queryString = format(
+    `
+  
+  INSERT INTO developers_info(%I, developerId)
+  VALUES(%L, ${id});
+  RETURNING *;
+
+  `,
+    Object.keys(payload),
+    Object.values(payload)
+  );
+
+  const queryResultRes: developerInfoResult = await client.query(queryString);
+  const developerInformation = queryResultRes.rows[0];
+
+  return res.status(201).json(developerInformation);
 };
 
 export {
