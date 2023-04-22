@@ -2,15 +2,29 @@ import { Request, Response, NextFunction } from "express";
 import { client } from "./database";
 import format from "pg-format";
 
-const reqValidation = async (
+const payloadValidation = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<Response | void> => {
   const payload = req.body;
 
-  if (Object.keys(payload).length !== 2 || !payload.name || !payload.email) {
+  if (!payload.name && !payload.email) {
     return res.status(422).json({ message: "Invalid payload" });
+  }
+
+  if (Object.keys(payload).some((key) => key !== "name" && key !== "email")) {
+    return res.status(422).json({
+      message: "Invalid payload",
+    });
+  }
+
+  if (payload.name && typeof payload.name !== "string") {
+    return res.status(422).json({ message: "Name must be a string" });
+  }
+
+  if (payload.email && typeof payload.email !== "string") {
+    return res.status(422).json({ message: "Email must be a string" });
   }
 
   next();
@@ -22,6 +36,10 @@ const validateNewDeveloper = async (
   next: NextFunction
 ): Promise<Response | void> => {
   const payload = req.body;
+
+  if (Object.keys(payload).length !== 2 || !payload.name || !payload.email) {
+    return res.status(422).json({ message: "Invalid payload" });
+  }
 
   const queryString = format(
     `
@@ -59,4 +77,4 @@ SELECT * FROM developers WHERE id = %L;
   next();
 };
 
-export { validateNewDeveloper, idDeveloperVerification, reqValidation };
+export { validateNewDeveloper, idDeveloperVerification, payloadValidation };
