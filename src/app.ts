@@ -4,6 +4,7 @@ import {
   idDeveloperVerification,
   payloadValidation,
   validateNewDeveloper,
+  validateNewDeveloperInfo,
 } from "./middlewars";
 import {
   listDeveloperById,
@@ -34,6 +35,7 @@ app.delete("/developers/:id", idDeveloperVerification, removeDeveloper);
 app.post(
   "/developers/:id/infos",
   idDeveloperVerification,
+  validateNewDeveloperInfo,
   registerAdicionalInfo
 );
 
