@@ -2,8 +2,7 @@ import { Response, Request } from "express";
 import format from "pg-format";
 import { client } from "./database";
 import {
-  IListDeveloperRes,
-  developerCreate,
+  developerReq,
   developerInfoResult,
   developerResult,
 } from "./interfaces";
@@ -12,7 +11,7 @@ const registerNewDeveloper = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const payload: developerCreate = req.body;
+  const payload: developerReq = req.body;
 
   const queryString = format(
     `
@@ -65,7 +64,33 @@ const updateDeveloperData = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  return res.status(200).json();
+  const payload: developerReq = req.body;
+  const id = parseInt(req.params.id);
+  const arrayNewInfo = [];
+
+  if (payload.name) {
+    arrayNewInfo.push(`name = ${payload.name}`);
+  }
+
+  if (payload.email) {
+    arrayNewInfo.push(`email = ${payload}`);
+  }
+
+  const newInfo = arrayNewInfo.join(", ");
+
+  const queryString = format(
+    `
+  
+  UPDATE developers SET ${newInfo} WHERE id = %L RETURNING *;
+  
+  `,
+    id
+  );
+
+  const queryResult: developerResult = await client.query(queryString);
+  const updatedDeveloper = queryResult.rows[0];
+
+  return res.status(200).json(updatedDeveloper);
 };
 
 const removeDeveloper = async (
