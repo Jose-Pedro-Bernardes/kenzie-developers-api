@@ -28,4 +28,25 @@ const validateNewDeveloper = async (
   next();
 };
 
-export { validateNewDeveloper };
+const idDeveloperVerification = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const id = req.params.id;
+
+  const queryString = format(
+    `
+SELECT * FROM developers WHERE id = %L;
+`,
+    id
+  );
+  const queryResult = await client.query(queryString);
+  if (!queryResult.rows[0]) {
+    return res.status(404).json({ message: "Developer not found." });
+  }
+
+  next();
+};
+
+export { validateNewDeveloper, idDeveloperVerification };
