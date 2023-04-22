@@ -2,7 +2,7 @@ import express, { Application, json } from "express";
 import "dotenv/config";
 import {
   idDeveloperVerification,
-  reqValidation,
+  payloadValidation,
   validateNewDeveloper,
 } from "./middlewars";
 import {
@@ -19,14 +19,14 @@ app.use(json());
 
 app.post(
   "/developers",
-  reqValidation,
+  payloadValidation,
   validateNewDeveloper,
   registerNewDeveloper
 );
 app.get("/developers/:id", idDeveloperVerification, listDeveloperById);
 app.patch(
   "/developers/:id",
-  reqValidation,
+  payloadValidation,
   idDeveloperVerification,
   updateDeveloperData
 );
