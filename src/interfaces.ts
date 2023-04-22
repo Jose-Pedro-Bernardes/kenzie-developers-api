@@ -6,16 +6,8 @@ interface IDeveloper {
   email: string;
 }
 
-type developerCreate = Omit<IDeveloper, "id">;
+type developerReq = Omit<IDeveloper, "id">;
 type developerResult = QueryResult<IDeveloper>;
-
-interface IListDeveloperRes {
-  developerId: number;
-  developerName: string;
-  developerEmail: string;
-  developerInfoDeveloperSince: Date | null;
-  developerInfoPreferredOS: string | null;
-}
 
 interface IDeveloperInfo {
   id: number;
@@ -24,13 +16,7 @@ interface IDeveloperInfo {
   developerId: number;
 }
 
-type developerInfoOmit = Omit<IDeveloperInfo, "id" | "developerId">;
-type developerInfoResult = QueryResult<developerInfoOmit>;
+type developerInfo = Omit<IDeveloperInfo, "id" | "developerId">;
+type developerInfoResult = QueryResult<developerInfo>;
 
-export {
-  IDeveloper,
-  developerCreate,
-  developerResult,
-  developerInfoResult,
-  IListDeveloperRes,
-};
+export { IDeveloper, developerReq, developerResult, developerInfoResult };
