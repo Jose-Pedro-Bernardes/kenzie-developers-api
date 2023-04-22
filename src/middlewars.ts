@@ -2,16 +2,26 @@ import { Request, Response, NextFunction } from "express";
 import { client } from "./database";
 import format from "pg-format";
 
-const validateNewDeveloper = async (
+const reqValidation = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<Response | void> => {
   const payload = req.body;
 
   if (Object.keys(payload).length !== 2 || !payload.name || !payload.email) {
     return res.status(422).json({ message: "Invalid payload" });
   }
+
+  next();
+};
+
+const validateNewDeveloper = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<Response | void> => {
+  const payload = req.body;
 
   const queryString = format(
     `
@@ -32,7 +42,7 @@ const idDeveloperVerification = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<Response | void> => {
   const id = req.params.id;
 
   const queryString = format(
@@ -49,4 +59,4 @@ SELECT * FROM developers WHERE id = %L;
   next();
 };
 
-export { validateNewDeveloper, idDeveloperVerification };
+export { validateNewDeveloper, idDeveloperVerification, reqValidation };
