@@ -5,11 +5,13 @@ import {
   payloadValidation,
   validateNewDeveloper,
   validateNewDeveloperInfo,
+  validateNewProject,
 } from "./middlewars";
 import {
   listDeveloperById,
   registerAdicionalInfo,
   registerNewDeveloper,
+  registerNewProject,
   removeDeveloper,
   updateDeveloperData,
 } from "./logic";
@@ -39,7 +41,7 @@ app.post(
   registerAdicionalInfo
 );
 
-app.post("/projects");
+app.post("/projects", validateNewProject, registerNewProject);
 app.get("/projects/:id");
 app.patch("/projects/:id");
 app.delete("/projects/:id");
