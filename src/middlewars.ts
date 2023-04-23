@@ -124,6 +124,26 @@ const validateNewDeveloperInfo = async (
   next();
 };
 
+const validateNewProject = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<Response | void> => {
+  const payload = req.body;
+  const developerId = payload.developerId;
+
+  const queryString = format(`
+  
+    SELECT * FROM developers WHERE id = ${developerId};
+
+  `);
+  const queryResult = await client.query(queryString);
+  if (!queryResult.rows[0]) {
+    return res.status(404).json({ message: "Developer not found." });
+  }
+  next();
+};
+
 export {
   validateNewDeveloper,
   idDeveloperVerification,
