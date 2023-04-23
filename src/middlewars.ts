@@ -149,4 +149,5 @@ export {
   idDeveloperVerification,
   payloadValidation,
   validateNewDeveloperInfo,
+  validateNewProject,
 };
