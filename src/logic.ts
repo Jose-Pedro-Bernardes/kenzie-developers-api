@@ -136,10 +136,39 @@ const registerAdicionalInfo = async (
   return res.status(201).json(developerInformation);
 };
 
+const registerNewProject = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const payload = req.body;
+
+  if (!payload.endDate) {
+    payload.endDate = null;
+  }
+
+  const queryString = format(
+    `
+  
+  INSERT INTO projects(%I)
+  VALUES (%L)
+  RETURNING *;
+  
+  `,
+    Object.keys(payload),
+    Object.values(payload)
+  );
+
+  const queryResult = await client.query(queryString);
+  const project = queryResult.rows[0];
+
+  return res.status(201).json(project);
+};
+
 export {
   registerNewDeveloper,
   listDeveloperById,
   updateDeveloperData,
   removeDeveloper,
   registerAdicionalInfo,
+  registerNewProject,
 };
