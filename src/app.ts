@@ -3,10 +3,11 @@ import "dotenv/config";
 import {
   idDeveloperVerification,
   payloadValidation,
+  validateEmailExists,
   validateNewDeveloper,
   validateNewDeveloperInfo,
   validateNewProject,
-} from "./middlewars";
+} from "./middleware/middlewars";
 import {
   listDeveloperById,
   registerAdicionalInfo,
@@ -14,22 +15,18 @@ import {
   registerNewProject,
   removeDeveloper,
   updateDeveloperData,
-} from "./logic";
+} from "./logic/logic";
 
 const app: Application = express();
 
 app.use(json());
 
-app.post(
-  "/developers",
-  payloadValidation,
-  validateNewDeveloper,
-  registerNewDeveloper
-);
+app.post("/developers", validateNewDeveloper, registerNewDeveloper);
 app.get("/developers/:id", idDeveloperVerification, listDeveloperById);
 app.patch(
   "/developers/:id",
   payloadValidation,
+  validateEmailExists,
   idDeveloperVerification,
   updateDeveloperData
 );
