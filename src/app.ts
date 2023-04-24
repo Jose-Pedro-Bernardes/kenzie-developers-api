@@ -13,10 +13,10 @@ import {
   removeDeveloper,
   updateDeveloperData,
 } from "./logic/devLogic";
-import { registerNewProject } from "./logic/projectsLogic";
+import { listProjectsById, registerNewProject } from "./logic/projectsLogic";
 import {
   validIdProject,
-  validateNewProject,
+  validateDeveloperInProject,
 } from "./middleware/projectsMiddleware";
 
 const app: Application = express();
@@ -39,11 +39,11 @@ app.post(
   registerAdicionalInfo
 );
 
-app.post("/projects", validateNewProject, validIdProject, registerNewProject);
-app.get("/projects/:id");
-app.patch("/projects/:id");
-app.delete("/projects/:id");
-app.post("/projects/:id/technologies");
+app.post("/projects", validateDeveloperInProject, registerNewProject);
+app.get("/projects/:id", validIdProject, listProjectsById);
+app.patch("/projects/:id", validIdProject, validateDeveloperInProject);
+app.delete("/projects/:id", validIdProject);
+app.post("/projects/:id/technologies", validIdProject);
 app.delete("/projects/:id/technologies/name");
 
 export default app;
