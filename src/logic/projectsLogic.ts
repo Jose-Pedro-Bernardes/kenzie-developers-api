@@ -87,4 +87,21 @@ const updatedProject = async (
   return res.status(200).json(projectUpdated);
 };
 
-export { registerNewProject, listProjectsById, updatedProject };
+const removeProject = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const id = req.params.id;
+
+  const queryString = format(
+    `
+  DELETE FROM projects WHERE id = %L;
+  `,
+    id
+  );
+
+  await client.query(queryString);
+  return res.status(204).json();
+};
+
+export { registerNewProject, listProjectsById, updatedProject, removeProject };
