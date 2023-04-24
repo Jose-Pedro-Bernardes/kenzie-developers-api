@@ -1,19 +1,27 @@
 import { Response, Request, query } from "express";
 import format from "pg-format";
 import { client } from "../database";
-import { IProject, projectResult } from "../interface/projectsInterfaces";
+import {
+  catchProjectResult,
+  newTech,
+  projectPayload,
+  projectResult,
+  updateProjectPayload,
+  updateProjectPayloadResult,
+} from "../interface/projectsInterfaces";
+import { QueryResult } from "pg";
 
 const registerNewProject = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const payload: IProject = req.body;
+  const payload: projectPayload = req.body;
 
   if (typeof payload.endDate === "undefined") {
     payload.endDate = null;
   }
 
-  const queryString = format(
+  const queryString: string = format(
     `
   
   INSERT INTO projects(%I)
@@ -35,7 +43,7 @@ const listProjectsById = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const id = req.params.id;
+  const id: number = parseInt(req.params.id);
 
   const queryString: string = format(
     `
@@ -60,7 +68,7 @@ const listProjectsById = async (
     id
   );
 
-  const queryResult = await client.query(queryString);
+  const queryResult: catchProjectResult = await client.query(queryString);
   return res.status(200).json(queryResult.rows);
 };
 
@@ -68,10 +76,10 @@ const updatedProject = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const id = req.params.id;
-  const payload = req.body;
+  const id: number = parseInt(req.params.id);
+  const payload: updateProjectPayload = req.body;
 
-  const queryString = format(
+  const queryString: string = format(
     `
   
   UPDATE projects SET(%I) = ROW(%L) WHERE id = %L RETURNING *;
@@ -82,7 +90,9 @@ const updatedProject = async (
     id
   );
 
-  const queryResult = await client.query(queryString);
+  const queryResult: updateProjectPayloadResult = await client.query(
+    queryString
+  );
   const projectUpdated = queryResult.rows[0];
   return res.status(200).json(projectUpdated);
 };
@@ -91,9 +101,9 @@ const removeProject = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const id = req.params.id;
+  const id: number = parseInt(req.params.id);
 
-  const queryString = format(
+  const queryString: string = format(
     `
   DELETE FROM projects WHERE id = %L;
   `,
@@ -108,15 +118,15 @@ const registerNewTech = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const id = parseInt(req.params.id);
-  const techName = req.body.name;
-  const addedIn = new Date();
+  const id: number = parseInt(req.params.id);
+  const techName: string = req.body.name;
+  const addedIn: Date = new Date();
 
-  const queryStringTecId = `
+  const queryStringTecId: string = `
   SELECT * FROM technologies WHERE name = $1;
   `;
   const queryResultTechId = await client.query(queryStringTecId, [techName]);
-  const techId = queryResultTechId.rows[0].id;
+  const techId = parseInt(queryResultTechId.rows[0].id);
 
   const tecInfo = {
     projectId: id,
@@ -124,7 +134,7 @@ const registerNewTech = async (
     addedIn: addedIn,
   };
 
-  const queryString = format(
+  const queryString: string = format(
     `
   
   INSERT INTO projects_technologies (%I) VALUES (%L) RETURNING *;
@@ -136,7 +146,7 @@ const registerNewTech = async (
 
   await client.query(queryString);
 
-  const queryString2 = format(
+  const queryString2: string = format(
     `
 
   SELECT
@@ -161,16 +171,16 @@ const registerNewTech = async (
     id
   );
 
-  const queryResult = await client.query(queryString2);
+  const queryResult: newTech = await client.query(queryString2);
   const newTec = queryResult.rows[0];
 
   return res.status(201).json(newTec);
 };
 
 const removeTech = async (req: Request, res: Response): Promise<Response> => {
-  const projectId = parseInt(req.params.id);
+  const projectId: number = parseInt(req.params.id);
 
-  const queryStringTecId = format(
+  const queryStringTecId: string = format(
     `
   
   SELECT * FROM projects_technologies WHERE "projectId" = %L;
@@ -180,8 +190,8 @@ const removeTech = async (req: Request, res: Response): Promise<Response> => {
   );
 
   const queryResultTechId = await client.query(queryStringTecId);
-  const techId = queryResultTechId.rows[0].technologyId;
-  const queryString = format(
+  const techId: number = parseInt(queryResultTechId.rows[0].technologyId);
+  const queryString: string = format(
     `
   
   DELETE FROM projects_technologies

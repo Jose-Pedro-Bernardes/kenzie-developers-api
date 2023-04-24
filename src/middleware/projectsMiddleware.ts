@@ -7,9 +7,9 @@ const validIdProject = async (
   res: Response,
   next: NextFunction
 ): Promise<Response | void> => {
-  const id = req.params.id;
+  const id: number = parseInt(req.params.id);
 
-  const queryString = format(
+  const queryString: string = format(
     `
   
   SELECT * FROM projects WHERE id = %L;
@@ -33,7 +33,7 @@ const validateDeveloperInProject = async (
   next: NextFunction
 ): Promise<Response | void> => {
   const payload = req.body;
-  const developerId = payload.developerId;
+  const developerId = parseInt(payload.developerId);
 
   const queryString = format(`
   
