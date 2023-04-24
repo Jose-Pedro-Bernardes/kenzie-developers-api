@@ -18,12 +18,14 @@ import {
   registerNewProject,
   registerNewTech,
   removeProject,
+  removeTech,
   updatedProject,
 } from "./logic/projectsLogic";
 import {
   validIdProject,
   validateDeveloperInProject,
   validateNewTech,
+  validateRemoveTech,
 } from "./middleware/projectsMiddleware";
 
 const app: Application = express();
@@ -61,6 +63,11 @@ app.post(
   validateNewTech,
   registerNewTech
 );
-app.delete("/projects/:id/technologies/name");
+app.delete(
+  "/projects/:id/technologies/:name",
+  validIdProject,
+  validateRemoveTech,
+  removeTech
+);
 
 export default app;
