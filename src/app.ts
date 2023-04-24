@@ -25,9 +25,8 @@ app.post("/developers", validateNewDeveloper, registerNewDeveloper);
 app.get("/developers/:id", idDeveloperVerification, listDeveloperById);
 app.patch(
   "/developers/:id",
-  payloadValidation,
-  validateEmailExists,
   idDeveloperVerification,
+  validateEmailExists,
   updateDeveloperData
 );
 app.delete("/developers/:id", idDeveloperVerification, removeDeveloper);
