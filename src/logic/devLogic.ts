@@ -108,7 +108,7 @@ const removeDeveloper = async (
     id
   );
 
-  const queryResult = await client.query(queryString);
+  await client.query(queryString);
 
   return res.status(204).json();
 };
