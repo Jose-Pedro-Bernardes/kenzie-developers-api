@@ -1,4 +1,4 @@
-import { Response, Request } from "express";
+import { Response, Request, query } from "express";
 import format from "pg-format";
 import { client } from "../database";
 import { IProject, projectResult } from "../interface/projectsInterfaces";
@@ -64,4 +64,27 @@ const listProjectsById = async (
   return res.status(200).json(queryResult.rows);
 };
 
-export { registerNewProject, listProjectsById };
+const updatedProject = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const id = req.params.id;
+  const payload = req.body;
+
+  const queryString = format(
+    `
+  
+  UPDATE projects SET(%I) = ROW(%L) WHERE id = %L RETURNING *;
+
+  `,
+    Object.keys(payload),
+    Object.values(payload),
+    id
+  );
+
+  const queryResult = await client.query(queryString);
+  const projectUpdated = queryResult.rows[0];
+  return res.status(200).json(projectUpdated);
+};
+
+export { registerNewProject, listProjectsById, updatedProject };
