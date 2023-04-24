@@ -19,7 +19,7 @@ const validIdProject = async (
   );
 
   const queryResult = await client.query(queryString);
-  if (queryResult.rows[0]) {
+  if (!queryResult.rows[0]) {
     return res.status(404).json({
       message: "Project not found.",
     });
@@ -27,7 +27,7 @@ const validIdProject = async (
   next();
 };
 
-const validateNewProject = async (
+const validateDeveloperInProject = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -47,12 +47,4 @@ const validateNewProject = async (
   next();
 };
 
-const validateUpdateProject = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<Response | void> => {
-  next();
-};
-
-export { validIdProject, validateNewProject, validateUpdateProject };
+export { validIdProject, validateDeveloperInProject };
