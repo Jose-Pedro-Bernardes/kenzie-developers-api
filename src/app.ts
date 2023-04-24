@@ -16,6 +16,7 @@ import {
 import {
   listProjectsById,
   registerNewProject,
+  removeProject,
   updatedProject,
 } from "./logic/projectsLogic";
 import {
@@ -51,7 +52,7 @@ app.patch(
   validateDeveloperInProject,
   updatedProject
 );
-app.delete("/projects/:id", validIdProject);
+app.delete("/projects/:id", validIdProject, removeProject);
 app.post("/projects/:id/technologies", validIdProject);
 app.delete("/projects/:id/technologies/name");
 
