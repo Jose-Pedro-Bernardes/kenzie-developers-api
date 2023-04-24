@@ -7,7 +7,7 @@ import {
   validateNewDeveloper,
   validateNewDeveloperInfo,
   validateNewProject,
-} from "./middleware/middlewars";
+} from "./middleware/developersMiddlewars";
 import {
   listDeveloperById,
   registerAdicionalInfo,
