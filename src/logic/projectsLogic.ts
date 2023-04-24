@@ -104,4 +104,73 @@ const removeProject = async (
   return res.status(204).json();
 };
 
-export { registerNewProject, listProjectsById, updatedProject, removeProject };
+const registerNewTech = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const id = parseInt(req.params.id);
+  const techName = req.body.name;
+  const addedIn = new Date();
+
+  const queryStringTecId = `
+  SELECT * FROM technologies WHERE name = $1;
+  `;
+  const queryResultTechId = await client.query(queryStringTecId, [techName]);
+  const techId = queryResultTechId.rows[0].id;
+
+  const tecInfo = {
+    projectId: id,
+    technologyId: techId,
+    addedIn: addedIn,
+  };
+
+  const queryString = format(
+    `
+  
+  INSERT INTO projects_technologies (%I) VALUES (%L) RETURNING *;
+  
+  `,
+    Object.keys(tecInfo),
+    Object.values(tecInfo)
+  );
+
+  await client.query(queryString);
+
+  const queryString2 = format(
+    `
+
+  SELECT
+    tec.id "technologyId",
+    tec."name" "technologyName",
+    project.id "projectId",
+    project."name" "projectName",
+    project."description" "projectDescription",
+    project."estimatedTime" "projectEstimatedTime",
+    project."repository" "projectRepository",
+    project."startDate" "projectStartDate",
+    project."endDate" "projectEndDate"
+  FROM
+    technologies tec 
+  LEFT JOIN 
+    projects_technologies project_tec ON project_tec."technologyId" = tec.id
+  LEFT JOIN 
+    projects project  ON project_tec."projectId" = project.id
+  WHERE project.id = %L;
+ 
+  `,
+    id
+  );
+
+  const queryResult = await client.query(queryString2);
+  const newTec = queryResult.rows[0];
+
+  return res.status(201).json(newTec);
+};
+
+export {
+  registerNewProject,
+  listProjectsById,
+  updatedProject,
+  removeProject,
+  registerNewTech,
+};
