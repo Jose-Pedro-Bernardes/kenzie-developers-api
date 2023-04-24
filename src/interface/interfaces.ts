@@ -11,12 +11,13 @@ type developerResult = QueryResult<IDeveloper>;
 
 interface IDeveloperInfo {
   id: number;
-  developerSince: Date;
-  preferredOS: "Windows" | "Linux" | "MacOS";
-  developerId: number;
+  developerSince?: Date;
+  preferredOS?: "Windows" | "Linux" | "MacOS";
+  developerId?: number;
 }
 
 type developerInfo = Omit<IDeveloperInfo, "id" | "developerId">;
+type developerInfoReq = Omit<IDeveloperInfo, "id">;
 type developerInfoResult = QueryResult<developerInfo>;
 
 interface IProject {
@@ -33,6 +34,7 @@ type projectResult = QueryResult<IProject>;
 
 export {
   IDeveloper,
+  developerInfoReq,
   developerReq,
   developerResult,
   developerInfoResult,
