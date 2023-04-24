@@ -5,10 +5,8 @@ import {
   developerReq,
   developerInfoResult,
   developerResult,
-  IProject,
-  projectResult,
   developerInfoReq,
-} from "../interface/interfaces";
+} from "../interface/devInterfaces";
 
 const registerNewDeveloper = async (
   req: Request,
@@ -143,39 +141,10 @@ const registerAdicionalInfo = async (
   return res.status(201).json(developerInformation);
 };
 
-const registerNewProject = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
-  const payload: IProject = req.body;
-
-  if (typeof payload.endDate === "undefined") {
-    payload.endDate = null;
-  }
-
-  const queryString = format(
-    `
-  
-  INSERT INTO projects(%I)
-  VALUES (%L)
-  RETURNING *;
-  
-  `,
-    Object.keys(payload),
-    Object.values(payload)
-  );
-
-  const queryResult: projectResult = await client.query(queryString);
-  const project = queryResult.rows[0];
-
-  return res.status(201).json(project);
-};
-
 export {
   registerNewDeveloper,
   listDeveloperById,
   updateDeveloperData,
   removeDeveloper,
   registerAdicionalInfo,
-  registerNewProject,
 };

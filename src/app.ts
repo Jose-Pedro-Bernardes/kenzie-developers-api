@@ -2,20 +2,22 @@ import express, { Application, json } from "express";
 import "dotenv/config";
 import {
   idDeveloperVerification,
-  payloadValidation,
   validateEmailExists,
   validateNewDeveloper,
   validateNewDeveloperInfo,
-  validateNewProject,
 } from "./middleware/developersMiddlewars";
 import {
   listDeveloperById,
   registerAdicionalInfo,
   registerNewDeveloper,
-  registerNewProject,
   removeDeveloper,
   updateDeveloperData,
-} from "./logic/logic";
+} from "./logic/devLogic";
+import { registerNewProject } from "./logic/projectsLogic";
+import {
+  validIdProject,
+  validateNewProject,
+} from "./middleware/projectsMiddleware";
 
 const app: Application = express();
 
@@ -37,7 +39,7 @@ app.post(
   registerAdicionalInfo
 );
 
-app.post("/projects", validateNewProject, registerNewProject);
+app.post("/projects", validateNewProject, validIdProject, registerNewProject);
 app.get("/projects/:id");
 app.patch("/projects/:id");
 app.delete("/projects/:id");

@@ -20,24 +20,10 @@ type developerInfo = Omit<IDeveloperInfo, "id" | "developerId">;
 type developerInfoReq = Omit<IDeveloperInfo, "id">;
 type developerInfoResult = QueryResult<developerInfo>;
 
-interface IProject {
-  name: string;
-  description: string;
-  estimatedTime: string;
-  repository: string;
-  startDate: Date;
-  endDate?: Date | null;
-  developerId: number;
-}
-
-type projectResult = QueryResult<IProject>;
-
 export {
   IDeveloper,
   developerInfoReq,
   developerReq,
   developerResult,
   developerInfoResult,
-  IProject,
-  projectResult,
 };
