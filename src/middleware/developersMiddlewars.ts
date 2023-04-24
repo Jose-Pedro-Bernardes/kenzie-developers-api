@@ -89,16 +89,18 @@ const validateEmailExists = async (
   const queryString = format(
     `
 
-SELECT * developers WHERE email = %L
+    SELECT "email" FROM developers WHERE "email" ILIKE '%s'
 
-`,
+    `,
     payload.email
   );
 
   const queryResult = await client.query(queryString);
   if (queryResult.rows[0]) {
-    return res.status(400).json({ message: "Email alredy exists." });
+    return res.status(409).json({ message: "Email alredy exists." });
   }
+
+  next();
 };
 
 const validateNewDeveloperInfo = async (
@@ -112,7 +114,7 @@ const validateNewDeveloperInfo = async (
   const queryString = format(
     `
   
-  SELECT developerId FROM developers_info WHERE developerId = %L;
+  SELECT * FROM developer_infos WHERE "developerId" = %L;
   
   `,
     id
@@ -123,11 +125,9 @@ const validateNewDeveloperInfo = async (
     return res.status(409).json({ message: "Developer infos already exists." });
   }
 
-  if (
-    payload.preferredOS == "Windows" &&
-    payload.preferredOS == "MacOs" &&
-    payload.preferredOS == "Linux"
-  ) {
+  const validOS = ["Windows", "Linux", "MacOS"];
+
+  if (!validOS.includes(payload.preferredOS)) {
     return res.status(400).json({
       message: "Invalid OS option.",
       options: ["Windows", "Linux", "MacOS"],
