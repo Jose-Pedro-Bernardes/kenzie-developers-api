@@ -13,7 +13,11 @@ import {
   removeDeveloper,
   updateDeveloperData,
 } from "./logic/devLogic";
-import { listProjectsById, registerNewProject } from "./logic/projectsLogic";
+import {
+  listProjectsById,
+  registerNewProject,
+  updatedProject,
+} from "./logic/projectsLogic";
 import {
   validIdProject,
   validateDeveloperInProject,
@@ -41,7 +45,12 @@ app.post(
 
 app.post("/projects", validateDeveloperInProject, registerNewProject);
 app.get("/projects/:id", validIdProject, listProjectsById);
-app.patch("/projects/:id", validIdProject, validateDeveloperInProject);
+app.patch(
+  "/projects/:id",
+  validIdProject,
+  validateDeveloperInProject,
+  updatedProject
+);
 app.delete("/projects/:id", validIdProject);
 app.post("/projects/:id/technologies", validIdProject);
 app.delete("/projects/:id/technologies/name");
