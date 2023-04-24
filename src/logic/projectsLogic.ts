@@ -31,4 +31,37 @@ const registerNewProject = async (
   return res.status(201).json(project);
 };
 
-export { registerNewProject };
+const listProjectsById = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const id = req.params.id;
+
+  const queryString: string = format(
+    `
+    SELECT 
+      project.id "projectId",
+      project.name "projectName",
+      project.description "projectDescription",
+      project."estimatedTime" "projectEstimatedTime",
+      project.repository "projectRepository",
+      project."startDate" "projectStartDate",
+      project."endDate" "projectEndDate",
+      project."developerId" "projectDeveloperId",
+      project_tec."technologyId",
+      tec.name "technologyName"
+    FROM 
+      projects project
+      LEFT JOIN projects_technologies project_tec ON project.id = project_tec."projectId"
+      LEFT JOIN technologies tec ON project_tec."technologyId" = tec.id
+    WHERE 
+      project.id = %L;
+  `,
+    id
+  );
+
+  const queryResult = await client.query(queryString);
+  return res.status(200).json(queryResult.rows);
+};
+
+export { registerNewProject, listProjectsById };
