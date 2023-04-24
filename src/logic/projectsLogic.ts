@@ -167,10 +167,41 @@ const registerNewTech = async (
   return res.status(201).json(newTec);
 };
 
+const removeTech = async (req: Request, res: Response): Promise<Response> => {
+  const projectId = parseInt(req.params.id);
+
+  const queryStringTecId = format(
+    `
+  
+  SELECT * FROM projects_technologies WHERE "projectId" = %L;
+  
+  `,
+    projectId
+  );
+
+  const queryResultTechId = await client.query(queryStringTecId);
+  const techId = queryResultTechId.rows[0].technologyId;
+  const queryString = format(
+    `
+  
+  DELETE FROM projects_technologies
+  WHERE "technologyId" = %L AND "projectId" = %L;
+   
+  `,
+    techId,
+    projectId
+  );
+
+  await client.query(queryString);
+
+  return res.status(204).json();
+};
+
 export {
   registerNewProject,
   listProjectsById,
   updatedProject,
   removeProject,
   registerNewTech,
+  removeTech,
 };

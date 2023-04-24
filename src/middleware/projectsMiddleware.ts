@@ -103,4 +103,66 @@ SELECT * FROM technologies WHERE "name" = '%s';
   next();
 };
 
-export { validIdProject, validateDeveloperInProject, validateNewTech };
+const validateRemoveTech = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<Response | void> => {
+  const { id, name } = req.params;
+
+  const queryString = format(
+    `
+
+  SELECT * FROM technologies WHERE "name" = '%s';
+
+`,
+    name
+  );
+
+  const queryResult = await client.query(queryString);
+  if (!queryResult.rows[0]) {
+    return res.status(400).json({
+      message: "Technology not supported.",
+      options: [
+        "JavaScript",
+        "Python",
+        "React",
+        "Express.js",
+        "HTML",
+        "CSS",
+        "Django",
+        "PostgreSQL",
+        "MongoDB",
+      ],
+    });
+  }
+
+  const queryString2 = format(
+    `
+  
+    SELECT * FROM technologies tec
+    JOIN projects_technologies project_tec ON tec.id = project_tec."technologyId"
+    WHERE tec.name = %L AND project_tec."projectId" = %L;
+  
+  `,
+    name,
+    id
+  );
+
+  const queryResult2 = await client.query(queryString2);
+
+  if (!queryResult2.rows[0]) {
+    return res.status(400).json({
+      message: "Technology not related to the project.",
+    });
+  }
+
+  next();
+};
+
+export {
+  validIdProject,
+  validateDeveloperInProject,
+  validateNewTech,
+  validateRemoveTech,
+};
