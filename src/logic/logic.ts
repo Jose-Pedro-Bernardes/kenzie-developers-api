@@ -7,6 +7,7 @@ import {
   developerResult,
   IProject,
   projectResult,
+  developerInfoReq,
 } from "../interface/interfaces";
 
 const registerNewDeveloper = async (
@@ -69,21 +70,24 @@ const updateDeveloperData = async (
   const arrayNewInfo = [];
 
   if (payload.name) {
-    arrayNewInfo.push(`name = ${payload.name}`);
+    arrayNewInfo.push(`name = '${payload.name}'`);
   }
 
   if (payload.email) {
-    arrayNewInfo.push(`email = ${payload}`);
+    arrayNewInfo.push(`email = '${payload.email}'`);
   }
 
   const newInfo = arrayNewInfo.join(", ");
 
-  const queryString = format(
+  const queryString: string = format(
     `
-  
-  UPDATE developers SET ${newInfo} WHERE id = %L RETURNING *;
-  
-  `,
+      UPDATE 
+          developers 
+          SET ${newInfo}
+      WHERE 
+          id = %L
+      RETURNING *;
+      `,
     id
   );
 
@@ -115,19 +119,22 @@ const registerAdicionalInfo = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const id = parseInt(req.params.id);
-  const payload = req.body;
+  const payload: developerInfoReq = req.body;
+  const developerId = parseInt(req.params.id);
+
+  const payloadData = {
+    ...payload,
+    developerId,
+  };
 
   const queryString = format(
     `
-  
-  INSERT INTO developer_infos(%I, developerId)
-  VALUES(%L, ${id})
-  RETURNING *;
-
+    INSERT INTO developer_infos (%I)
+    VALUES (%L)
+    RETURNING *;
   `,
-    Object.keys(payload),
-    Object.values(payload)
+    Object.keys(payloadData),
+    Object.values(payloadData)
   );
 
   const queryResultRes: developerInfoResult = await client.query(queryString);
