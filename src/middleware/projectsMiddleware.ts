@@ -47,4 +47,60 @@ const validateDeveloperInProject = async (
   next();
 };
 
-export { validIdProject, validateDeveloperInProject };
+const validateNewTech = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<Response | void> => {
+  const { name } = req.body;
+  const id = req.params.id;
+
+  const queryString = format(
+    `
+
+SELECT * FROM technologies WHERE "name" = '%s';
+
+`,
+    name
+  );
+
+  const queryResult = await client.query(queryString);
+  if (!queryResult.rows[0]) {
+    return res.status(400).json({
+      message: "Technology not supported.",
+      options: [
+        "JavaScript",
+        "Python",
+        "React",
+        "Express.js",
+        "HTML",
+        "CSS",
+        "Django",
+        "PostgreSQL",
+        "MongoDB",
+      ],
+    });
+  }
+  const techId = queryResult.rows[0].id;
+  const queryString3 = format(
+    `
+  
+  SELECT * FROM projects_technologies WHERE "technologyId" = %L AND "projectId" = %L;
+  
+  `,
+    techId,
+    id
+  );
+
+  const queryResult3 = await client.query(queryString3);
+
+  if (queryResult3.rows[0]) {
+    return res.status(409).json({
+      message: "This technology is already associated with the project",
+    });
+  }
+
+  next();
+};
+
+export { validIdProject, validateDeveloperInProject, validateNewTech };
